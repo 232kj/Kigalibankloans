@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank of Kigali - Gusaba Inguzanyo</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --bk-blue: #002b49;
+            --bk-blue-hover: #001f35;
+            --bk-accent: #00a3e0;
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --input-border: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            width: 100%;
+            background-color: var(--bk-blue);
+            height: 60px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 22px;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+        }
+
+        .card {
+            background: white;
+            width: 90%;
+            max-width: 440px;
+            margin: 20px 0 30px;
+            padding: 32px 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 43, 73, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            font-size: 24px;
+            color: var(--text-main);
+            margin: 0 0 6px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 auto 32px;
+            width: 80%;
+        }
+
+        .step-bar {
+            flex: 1;
+            height: 4px;
+            background-color: #e2e8f0;
+            border-radius: 2px;
+        }
+
+        .step-bar.active {
+            background-color: var(--bk-blue);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            font-size: 15px;
+            padding: 14px 16px;
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: #334155;
+            outline: none;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--bk-blue);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 14px;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        textarea.form-control {
+            resize: none;
+            height: 95px;
+            font-family: inherit;
+        }
+
+        .btn-next {
+            background-color: var(--bk-blue);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            margin-top: 15px;
+            text-transform: uppercase;
+            transition: background-color 0.2s;
+        }
+
+        .btn-next:hover {
+            background-color: var(--bk-blue-hover);
+        }
+
+        .footer-banner {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-header">
+    <a href="/" class="back-btn">← Subira</a>
+    <div class="header-title">Bank of Kigali</div>
+    <div class="menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+
+<div class="card">
+    <h1 class="main-title">Gusaba Inguzanyo</h1>
+    <div class="subtext">Intambwe 1 kuri 3</div>
+
+    <div class="step-indicator">
+        <div class="step-bar active"></div>
+        <div class="step-bar"></div>
+        <div class="step-bar"></div>
+    </div>
+
+    <form id="loanForm" onsubmit="submitStep1(event)">
+        <div class="form-group">
+            <label for="loanType">Ubwoko bw'Inguzanyo</label>
+            <select id="loanType" class="form-control" required>
+                <option value="Inguzanyo y'Abakozi" selected>Inguzanyo y'Abakozi (Personal Loan)</option>
+                <option value="Inguzanyo y'Ubucuruzi">Inguzanyo y'Ubucuruzi</option>
+                <option value="Inguzanyo y'Amashuri">Inguzanyo y'Amashuri</option>
+                <option value="Inguzanyo y'Ihutirwa">Inguzanyo y'Ihutirwa</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="loanAmt">Ingano y'Inguzanyo (RWF)</label>
+            <input type="number" id="loanAmt" class="form-control" placeholder="250000" value="250000" required>
+        </div>
+
+        <div class="form-group">
+            <label for="loanTerm">Igihe cyo Kwishyura</label>
+            <select id="loanTerm" class="form-control" required>
+                <option value="6 Amezi">Amezi 6</option>
+                <option value="12 Amezi" selected>Amezi 12</option>
+                <option value="18 Amezi">Amezi 18</option>
+                <option value="24 Amezi">Amezi 24</option>
+                <option value="36 Amezi">Amezi 36</option>
+                <option value="48 Amezi">Amezi 48</option>
+                <option value="60 Amezi">Amezi 60</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="loanPurpose">Icyo iyi nguzanyo izakoreshwa</label>
+            <textarea id="loanPurpose" class="form-control" placeholder="Teganya icyo iyi nguzanyo izakora..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-next">KOMEZA</button>
+    </form>
+</div>
+
+<div class="footer-banner">
+    © 2026 Bank of Kigali Rwanda
+</div>
+
+<script>
+    window.onload = () => {
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        const savedAmount = localStorage.getItem('loan_amount') || localStorage.getItem('amount') || localStorage.getItem('appliedAmount');
+        const savedDuration = localStorage.getItem('loan_term') || localStorage.getItem('loanDuration') || localStorage.getItem('duration');
+
+        if (savedAmount) {
+            const digitsOnly = savedAmount.toString().replace(/\D/g, '');
+            if (digitsOnly) {
+                document.getElementById('loanAmt').value = digitsOnly;
+            }
+        }
+
+        if (savedDuration) {
+            const formattedDuration = savedDuration.toString().trim().toLowerCase();
+            const selectEl = document.getElementById('loanTerm');
+            
+            for (let i = 0; i < selectEl.options.length; i++) {
+                if (selectEl.options[i].value.toLowerCase().includes(formattedDuration) || formattedDuration.includes(selectEl.options[i].value.toLowerCase().replace(/\D/g, ''))) {
+                    selectEl.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    };
+
+    function submitStep1(event) {
+        event.preventDefault();
+
+        const loanType = document.getElementById('loanType').value;
+        const loanAmt = Number(document.getElementById('loanAmt').value) || 0;
+        const loanTermVal = document.getElementById('loanTerm').value;
+        const loanPurpose = document.getElementById('loanPurpose').value;
+
+        const months = Number(loanTermVal.replace(/\D/g, '')) || 12;
+
+        const annualRate = 0.05;
+        const totalInterest = loanAmt * annualRate * (months / 12);
+        const monthlyPayment = Math.round((loanAmt + totalInterest) / months);
+
+        localStorage.setItem('loan_amount', loanAmt);
+        localStorage.setItem('amount', loanAmt);
+        localStorage.setItem('appliedAmount', loanAmt);
+
+        localStorage.setItem('loan_term', months);
+        localStorage.setItem('duration', months);
+        localStorage.setItem('appliedTerm', loanTermVal);
+
+        localStorage.setItem('monthly_repayment', monthlyPayment);
+        localStorage.setItem('appliedLoanType', loanType);
+        localStorage.setItem('appliedPurpose', loanPurpose);
+
+        window.location.href = "/page3"; 
+    }
+</script>
+
+</body>
+</html>
